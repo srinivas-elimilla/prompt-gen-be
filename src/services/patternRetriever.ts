@@ -3,7 +3,13 @@ import { Pool } from "pg";
 import { embedTextLocal } from "./localEmbeddings";
 // later: import embedTextOpenAI from "./embeddings";
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// console.log("DB URL >>>>", process.env.DATABASE_URL);
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
 const provider = (process.env.EMBEDDINGS_PROVIDER || "hf").toLowerCase();
 
@@ -12,6 +18,10 @@ function toVectorLiteral(vec: number[]) {
 }
 
 export async function retrievePatternsHF(query: string, k = 3) {
+  const test = await pool.query("SELECT NOW()");
+  console.log("DB Connected", test.rows[0]);
+
+  console.log("Retrieving patterns...");
   const table =
     provider === "openai"
       ? "public.prompt_patterns"
@@ -19,6 +29,8 @@ export async function retrievePatternsHF(query: string, k = 3) {
 
   // For now, only HF/local is implemented (no billing)
   const embedding = await embedTextLocal(query);
+  console.log("Embedding is done.");
+
   const vectorLiteral = toVectorLiteral(embedding);
 
   const sql = `
@@ -31,6 +43,8 @@ export async function retrievePatternsHF(query: string, k = 3) {
   `;
 
   const { rows } = await pool.query(sql, [vectorLiteral, k]);
+  console.log("Rows achieved.");
+
   return rows.map((r: any) => ({
     id: r.id,
     title: r.title,

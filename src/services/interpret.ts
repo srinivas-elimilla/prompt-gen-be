@@ -2,6 +2,7 @@ import { IntentSchema } from "../schemas/intent.schema";
 import { callWithFallback } from "./llmRouter";
 
 export async function interpretQuery(query: string) {
+  console.log("Interpreting query ...");
   const system = `
 You are a senior software architect.
 Extract a strict JSON "Intent" from the user's coding request.

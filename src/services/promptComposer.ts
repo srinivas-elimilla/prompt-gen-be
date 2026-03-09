@@ -25,6 +25,8 @@ export function composeCodingPrompts(
   intent: Intent,
   patterns: { title: string; content: string; score?: number }[] = [],
 ) {
+  console.log("Composing coding prompt...");
+
   const tech = intent.constraints.techStack.join(", ");
   const mustInclude = intent.constraints.mustInclude;
   const mustAvoid = intent.constraints.mustAvoid;

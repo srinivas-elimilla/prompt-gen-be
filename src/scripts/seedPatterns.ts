@@ -8,7 +8,18 @@ type PatternSeed = {
   content: string;
 };
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL is missing. Check backend/.env");
+}
+
+const pool = new Pool({
+  connectionString: databaseUrl,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
 async function embedText(text: string): Promise<number[]> {
   const apiKey = process.env.OPENAI_API_KEY;
@@ -174,6 +185,8 @@ HTTP status rules:
 
 async function main() {
   console.log("Seeding prompt_patterns...");
+  const test = await pool.query("SELECT NOW()");
+  console.log("DB connected:", test.rows[0]);
 
   // Optional: clear existing
   // await pool.query("TRUNCATE TABLE public.prompt_patterns RESTART IDENTITY;");

@@ -12,6 +12,7 @@ export const promptController = async (req: any, res: any) => {
     // 1) Interpret (LLM)
     const interpreted = await interpretQuery(query);
     const intent = interpreted.intent;
+    if (intent) console.log("Intent created");
 
     // 2) Retrieve (RAG) - build a better retrieval query than just goal
     const retrievalQuery = [
@@ -23,12 +24,14 @@ export const promptController = async (req: any, res: any) => {
       .join(" | ");
 
     const patterns = await retrievePatternsHF(retrievalQuery, 3);
+    if (patterns) console.log("Patterns retrived");
 
     // Optional: filter weak matches (tune threshold)
     const filteredPatterns = patterns.filter((p) => p.score >= 0.2);
 
     // 3) Compose (inject retrieved patterns into the prompt)
     const prompts = composeCodingPrompts(intent, filteredPatterns);
+    if (prompts) console.log("Composed prompts");
 
     res.json({
       interpretProvider: interpreted.provider,
