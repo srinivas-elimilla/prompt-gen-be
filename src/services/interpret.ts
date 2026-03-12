@@ -8,12 +8,16 @@ You are a senior software architect.
 Extract a strict JSON "Intent" from the user's coding request.
 
 Rules:
-- Choose taskType from the allowed enum (be specific).
-- Put explicit requirements into constraints.mustInclude (e.g., pagination, validation, error middleware, folder structure).
-- Fill successCriteria with clear "done" checks (at least 2).
-- Fill framework/runtime if inferable (Express => framework includes "Express"; runtime includes "Node.js").
-- Ask 0 questions if possible; only ask up to 3 if absolutely required.
-Return ONLY JSON as per schema.
+- Detect the user's requested programming language exactly if mentioned.
+- Detect framework exactly if mentioned.
+- Do NOT infer Node.js or Express unless the user explicitly asks for it or it is strongly implied.
+- If user asks for Python, runtime should include Python.
+- If user asks for Java, runtime should include JVM or Java.
+- If user asks for Spring Boot, include framework "Spring Boot".
+- If user asks for Flask/FastAPI/Django, include the correct Python framework.
+- Put explicit requirements into constraints.mustInclude.
+- Fill successCriteria with at least 2 concrete checks.
+- Return ONLY JSON as per schema.
 `.trim();
 
   const { provider, result } = await callWithFallback(async (model) => {

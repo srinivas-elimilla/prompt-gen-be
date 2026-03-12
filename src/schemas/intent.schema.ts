@@ -25,7 +25,22 @@ export const IntentSchema = z.object({
   taskType: TaskType,
   goal: z.string().min(10),
 
-  language: z.enum(["ts", "js", "python", "sql", "unknown"]).default("unknown"),
+  language: z
+    .enum([
+      "ts",
+      "js",
+      "python",
+      "java",
+      "go",
+      "csharp",
+      "php",
+      "ruby",
+      "rust",
+      "kotlin",
+      "sql",
+      "unknown",
+    ])
+    .default("unknown"),
   framework: z.array(z.string()).default([]),
   runtime: z.array(z.string()).default([]),
 

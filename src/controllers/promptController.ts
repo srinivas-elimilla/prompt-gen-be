@@ -13,6 +13,7 @@ export const promptController = async (req: any, res: any) => {
     const interpreted = await interpretQuery(query);
     const intent = interpreted.intent;
     if (intent) console.log("Intent created");
+    // console.log("intent >>>>>>", intent);
 
     // 2) Retrieve (RAG) - build a better retrieval query than just goal
     const retrievalQuery = [
@@ -25,6 +26,7 @@ export const promptController = async (req: any, res: any) => {
 
     const patterns = await retrievePatternsHF(retrievalQuery, 3);
     if (patterns) console.log("Patterns retrived");
+    // console.log("patterns >>>>>", patterns);
 
     // Optional: filter weak matches (tune threshold)
     const filteredPatterns = patterns.filter((p) => p.score >= 0.2);
